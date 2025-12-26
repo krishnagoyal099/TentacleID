@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Velvet Lounge - Age Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="ambient-bg">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="particles"></div>
+  </div>
+
+  <main class="container">
+    <!-- Logo & Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🍸</span>
+        <h1>The Velvet Lounge</h1>
+      </div>
+      <p class="tagline">An Exclusive Experience</p>
+    </header>
+
+    <!-- Age Gate -->
+    <section class="age-gate" id="ageGate">
+      <div class="gate-content">
+        <div class="age-badge">21+</div>
+        <h2>Age Verification Required</h2>
+        <p class="gate-text">You must be 21 or older to enter. Please verify your age using TentacleID.</p>
+        
+        <div class="verification-box">
+          <div class="privacy-notice">
+            <span class="privacy-icon">🔒</span>
+            <span>Your birthdate will NOT be shared. Only age verification is transmitted.</span>
+          </div>
+          
+          <button class="verify-btn" id="verifyBtn">
+            <span class="btn-icon">🐙</span>
+            <span>Verify with TentacleID</span>
+          </button>
+          
+          <p class="extension-status" id="extensionStatus">Checking for TentacleID...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Access Granted -->
+    <section class="access-granted hidden" id="accessGranted">
+      <div class="granted-content">
+        <div class="success-animation">
+          <div class="checkmark">✓</div>
+          <div class="success-glow"></div>
+        </div>
+        <h2>Welcome to The Velvet Lounge</h2>
+        <p class="welcome-text">Age verified. Enjoy your evening!</p>
+        
+        <div class="user-badge">
+          <span class="badge-icon">🎫</span>
+          <div class="badge-info">
+            <span class="badge-label">Digital Pass</span>
+            <span class="badge-did" id="userDid">did:key:...</span>
+          </div>
+        </div>
+
+        <div class="lounge-menu">
+          <h3>Tonight's Specials</h3>
+          <div class="menu-items">
+            <div class="menu-item">
+              <span class="item-name">Velvet Manhattan</span>
+              <span class="item-price">$18</span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Midnight Martini</span>
+              <span class="item-price">$16</span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Smoky Old Fashioned</span>
+              <span class="item-price">$20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Access Denied -->
+    <section class="access-denied hidden" id="accessDenied">
+      <div class="denied-content">
+        <div class="denied-icon">🚫</div>
+        <h2>Access Denied</h2>
+        <p>You must be 21 or older to enter The Velvet Lounge.</p>
+        <button class="retry-btn" id="retryBtn">Try Again</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Powered by <span class="tentacle-brand">🐙 TentacleID</span></p>
+      <p class="footer-note">Secure, private age verification without exposing personal data.</p>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

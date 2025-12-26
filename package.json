@@ -1,0 +1,22 @@
+{
+  "name": "tentacleid",
+  "version": "1.0.0",
+  "description": "Decentralized Identity Wallet - One Identity, Many Reaches 🐙",
+  "main": "demo/app.js",
+  "scripts": {
+    "serve": "npx http-server -p 3000 -c-1",
+    "dev": "npx http-server -p 3000 -c-1 -o /demo/"
+  },
+  "keywords": [
+    "did",
+    "decentralized-identity",
+    "verifiable-credentials",
+    "web3",
+    "blockchain",
+    "authentication",
+    "privacy",
+    "selective-disclosure"
+  ],
+  "author": "TentacleID Team",
+  "license": "MIT"
+}

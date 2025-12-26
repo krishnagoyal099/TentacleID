@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TentacleID Demo - Decentralized Identity in Action</title>
+  <meta name="description" content="Experience the future of authentication with TentacleID. Login without passwords, share only what you choose.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="tentacle-bg t1"></div>
+    <div class="tentacle-bg t2"></div>
+    <div class="tentacle-bg t3"></div>
+    <div class="tentacle-bg t4"></div>
+    <div class="glow-orb orb1"></div>
+    <div class="glow-orb orb2"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="nav-icon">🐙</span>
+      <span class="nav-title">TentacleID</span>
+      <span class="nav-badge">Demo</span>
+    </div>
+    <div class="nav-status" id="navStatus">
+      <span class="status-dot"></span>
+      <span>Not Connected</span>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>🔐</span>
+        <span>Web3 Identity</span>
+      </div>
+      <h1 class="hero-title">
+        One Identity.<br>
+        <span class="gradient-text">Many Reaches.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Experience passwordless authentication with selective disclosure. 
+        You control what you share, for how long.
+      </p>
+      
+      <div class="hero-cta" id="heroCta">
+        <div id="loginContainer"></div>
+        <p class="cta-hint">
+          <span id="extensionStatus">Checking for TentacleID extension...</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="octopus-hero">
+        <div class="hero-glow"></div>
+        <div class="octopus-main">🐙</div>
+        <div class="tentacle-reach t1">
+          <span class="reach-icon">📧</span>
+          <span class="reach-label">Email</span>
+        </div>
+        <div class="tentacle-reach t2">
+          <span class="reach-icon">🎂</span>
+          <span class="reach-label">Age</span>
+        </div>
+        <div class="tentacle-reach t3">
+          <span class="reach-icon">🪪</span>
+          <span class="reach-label">Identity</span>
+        </div>
+        <div class="tentacle-reach t4">
+          <span class="reach-icon">📍</span>
+          <span class="reach-label">Location</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Dashboard (Hidden by default) -->
+  <section class="dashboard hidden" id="dashboard">
+    <div class="dashboard-header">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">🐙</div>
+        <div class="user-details">
+          <p class="user-greeting">Welcome back!</p>
+          <p class="user-did" id="userDid">did:key:z...</p>
+        </div>
+      </div>
+      <button class="btn btn-outline" id="disconnectBtn">
+        <span>Disconnect</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16,17 21,12 16,7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Demo Features -->
+  <section class="features">
+    <div class="section-header">
+      <h2>Try It Out</h2>
+      <p>Experience selective disclosure in action</p>
+    </div>
+
+    <div class="feature-grid">
+      <!-- Age Verification Card -->
+      <div class="feature-card" id="ageVerifyCard">
+        <div class="card-icon">
+          <span>🎂</span>
+        </div>
+        <h3>Age Verification</h3>
+        <p>Prove you're 18+ without revealing your actual birthdate. Perfect for age-gated content.</p>
+        
+        <div class="card-demo">
+          <div class="demo-result hidden" id="ageResult">
+            <div class="result-icon success">✓</div>
+            <div class="result-text">
+              <strong>Verified: 18+</strong>
+              <span>Birthdate remains private</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="verifyAgeBtn" disabled>
+            <span>Verify Age</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,11 12,14 22,4"/>
+              <path d="M21,12v7a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V5A2,2,0,0,1,5,3h11"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="card-info">
+          <span class="info-tag">🔒 Zero-Knowledge</span>
+          <span class="info-tag">⏱️ Time-Limited</span>
+        </div>
+      </div>
+
+      <!-- Email Verification Card -->
+      <div class="feature-card" id="emailVerifyCard">
+        <div class="card-icon">
+          <span>📧</span>
+        </div>
+        <h3>Email Verification</h3>
+        <p>Grant temporary access to your email. The service can only see it for the duration you choose.</p>
+        
+        <div class="card-demo">
+          <div class="demo-result hidden" id="emailResult">
+            <div class="result-icon success">✓</div>
+            <div class="result-text">
+              <strong id="emailValue">Email verified</strong>
+              <span id="emailTimer">Access expires in 5:00</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="verifyEmailBtn" disabled>
+            <span>Share Email (5 min)</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4,4H20a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4Z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="card-info">
+          <span class="info-tag">⏰ 5 min access</span>
+          <span class="info-tag">🔄 Auto-revokes</span>
+        </div>
+      </div>
+
+      <!-- Full Login Card -->
+      <div class="feature-card featured" id="loginCard">
+        <div class="featured-badge">Full Demo</div>
+        <div class="card-icon">
+          <span>🔐</span>
+        </div>
+        <h3>Passwordless Login</h3>
+        <p>Login to this demo site using only your TentacleID. No password needed, ever.</p>
+        
+        <div class="card-demo">
+          <div class="demo-result hidden" id="loginResult">
+            <div class="result-icon success">✓</div>
+            <div class="result-text">
+              <strong>Logged In</strong>
+              <span id="loginDid">did:key:...</span>
+            </div>
+          </div>
+          <button class="btn btn-glow" id="fullLoginBtn" disabled>
+            <span class="btn-icon">🐙</span>
+            <span>Login with TentacleID</span>
+          </button>
+        </div>
+
+        <div class="card-info">
+          <span class="info-tag">🚫 No Password</span>
+          <span class="info-tag">🔐 Cryptographic</span>
+          <span class="info-tag">🌐 Decentralized</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="section-header">
+      <h2>How It Works</h2>
+      <p>Your identity, your control</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>Create Your Identity</h4>
+          <p>Generate a unique decentralized identifier (DID) stored securely in your browser.</p>
+        </div>
+        <div class="step-visual">🔑</div>
+      </div>
+
+      <div class="step-connector">
+        <div class="connector-line"></div>
+        <div class="connector-dot"></div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>Add Credentials</h4>
+          <p>Store verifiable credentials like age, email, or identity proofs.</p>
+        </div>
+        <div class="step-visual">📜</div>
+      </div>
+
+      <div class="step-connector">
+        <div class="connector-line"></div>
+        <div class="connector-dot"></div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>Selective Sharing</h4>
+          <p>Choose exactly what to share. Prove you're 18+ without revealing your birthdate.</p>
+        </div>
+        <div class="step-visual">🎯</div>
+      </div>
+
+      <div class="step-connector">
+        <div class="connector-line"></div>
+        <div class="connector-dot"></div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h4>Time-Limited Access</h4>
+          <p>Grant temporary permissions that automatically expire. Full control, always.</p>
+        </div>
+        <div class="step-visual">⏱️</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Details -->
+  <section class="tech-section">
+    <div class="section-header">
+      <h2>Built on Standards</h2>
+      <p>Enterprise-grade security, open standards</p>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="tech-icon">🌐</div>
+        <h4>W3C DIDs</h4>
+        <p>Decentralized Identifiers standard</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">📋</div>
+        <h4>Verifiable Credentials</h4>
+        <p>W3C VC Data Model 1.1</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🔐</div>
+        <h4>Web Crypto API</h4>
+        <p>ECDSA P-256 signatures</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">💾</div>
+        <h4>Encrypted Storage</h4>
+        <p>AES-GCM local encryption</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span>🐙</span>
+        <span>TentacleID</span>
+      </div>
+      <p class="footer-tagline">The future of identity is decentralized.</p>
+      <div class="footer-links">
+        <a href="https://www.w3.org/TR/did-core/" target="_blank">W3C DID Spec</a>
+        <a href="https://www.w3.org/TR/vc-data-model/" target="_blank">VC Data Model</a>
+        <a href="#" id="showCodeBtn">View API</a>
+      </div>
+    </div>
+    <div class="footer-wave">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,64C960,75,1056,85,1152,80C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" fill="rgba(124, 58, 237, 0.1)"/>
+      </svg>
+    </div>
+  </footer>
+
+  <!-- API Code Modal -->
+  <div class="modal" id="codeModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content code-modal">
+      <div class="modal-header">
+        <h3>🐙 TentacleID API</h3>
+        <button class="close-btn" id="closeCodeModal">×</button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="language-javascript">// Check if TentacleID is installed
+const { installed } = await tentacleID.isInstalled();
+
+// Request authentication
+const result = await tentacleID.authenticate({
+  requestedClaims: ['email', 'isOver18']
+});
+
+console.log(result.did);   // did:key:z6Mk...
+console.log(result.proof); // Cryptographic proof
+
+// Age verification (selective disclosure)
+const age = await tentacleID.verifyAge(18, 'Age check');
+// Returns: { verified: true, did: "..." }
+// Birthdate never revealed!
+
+// Email with time limit
+const email = await tentacleID.verifyEmail('Newsletter');
+// Access auto-expires after duration set by user
+
+// Create a login button
+tentacleID.createLoginButton('#container', {
+  text: 'Login with TentacleID',
+  requestedClaims: ['email'],
+  onSuccess: (result) => console.log('Logged in!', result),
+  onError: (err) => console.error(err)
+});</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

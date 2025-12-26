@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TentacleID</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="octopus-icon">🐙</div>
+        <h1>TentacleID</h1>
+      </div>
+      <div class="status-indicator" id="statusIndicator">
+        <span class="status-dot"></span>
+        <span class="status-text">Locked</span>
+      </div>
+    </header>
+
+    <!-- Locked State -->
+    <section id="lockedState" class="screen active">
+      <div class="lock-container">
+        <div class="lock-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <circle cx="12" cy="16" r="1"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <h2>Unlock Your Identity</h2>
+        <p class="subtitle">Enter your passphrase to access your TentacleID</p>
+        
+        <form id="unlockForm" class="auth-form">
+          <div class="input-group">
+            <input type="password" id="passphrase" placeholder="Enter passphrase" required>
+            <button type="button" class="toggle-password" id="togglePassword">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Unlock</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </form>
+
+        <div class="create-new">
+          <span>First time?</span>
+          <button id="showCreateBtn" class="btn-link">Create Identity</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Create Identity State -->
+    <section id="createState" class="screen">
+      <div class="create-container">
+        <button id="backToUnlock" class="back-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Back
+        </button>
+
+        <div class="octopus-animation">
+          <div class="tentacle t1"></div>
+          <div class="tentacle t2"></div>
+          <div class="tentacle t3"></div>
+          <div class="tentacle t4"></div>
+          <div class="octopus-body">🐙</div>
+        </div>
+
+        <h2>Create Your Identity</h2>
+        <p class="subtitle">Your keys, your identity. Never shared.</p>
+
+        <form id="createForm" class="auth-form">
+          <div class="input-group">
+            <input type="text" id="displayName" placeholder="Display name (optional)">
+          </div>
+          <div class="input-group">
+            <input type="password" id="newPassphrase" placeholder="Create passphrase" required minlength="8">
+          </div>
+          <div class="input-group">
+            <input type="password" id="confirmPassphrase" placeholder="Confirm passphrase" required>
+          </div>
+          
+          <div class="strength-meter">
+            <div class="strength-bar" id="strengthBar"></div>
+          </div>
+          <p class="strength-text" id="strengthText">Enter a strong passphrase</p>
+
+          <button type="submit" class="btn btn-primary btn-glow">
+            <span>Generate Identity</span>
+            <div class="sparkles">✨</div>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Main Dashboard -->
+    <section id="dashboardState" class="screen">
+      <nav class="tabs">
+        <button class="tab active" data-tab="identity">Identity</button>
+        <button class="tab" data-tab="credentials">Credentials</button>
+        <button class="tab" data-tab="activity">Activity</button>
+      </nav>
+
+      <!-- Identity Tab -->
+      <div class="tab-content active" id="identityTab">
+        <div class="identity-card">
+          <div class="identity-visual">
+            <div class="identity-avatar" id="identityAvatar"></div>
+            <div class="identity-glow"></div>
+          </div>
+          <div class="identity-info">
+            <p class="identity-name" id="displayNameText">Anonymous</p>
+            <div class="did-container">
+              <code class="did-text" id="didText">did:key:z...</code>
+              <button class="copy-btn" id="copyDid" title="Copy DID">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="action-btn" id="addCredentialBtn">
+            <div class="action-icon">📜</div>
+            <span>Add Credential</span>
+          </button>
+          <button class="action-btn" id="scanQRBtn">
+            <div class="action-icon">📷</div>
+            <span>Scan QR</span>
+          </button>
+          <button class="action-btn" id="shareIdentityBtn">
+            <div class="action-icon">🔗</div>
+            <span>Share</span>
+          </button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="credentialCount">0</span>
+            <span class="stat-label">Credentials</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="permissionCount">0</span>
+            <span class="stat-label">Active Permissions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Credentials Tab -->
+      <div class="tab-content" id="credentialsTab">
+        <div class="credentials-list" id="credentialsList">
+          <!-- Credentials will be dynamically added -->
+        </div>
+
+        <div class="empty-state" id="noCredentials">
+          <div class="empty-icon">📭</div>
+          <p>No credentials yet</p>
+          <button class="btn btn-secondary" id="addFirstCredential">Add your first credential</button>
+        </div>
+      </div>
+
+      <!-- Activity Tab -->
+      <div class="tab-content" id="activityTab">
+        <div class="activity-list" id="activityList">
+          <!-- Activity items will be dynamically added -->
+        </div>
+
+        <div class="empty-state" id="noActivity">
+          <div class="empty-icon">📊</div>
+          <p>No recent activity</p>
+          <span class="empty-hint">Login requests and verifications will appear here</span>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="footer-actions">
+        <button class="footer-btn" id="settingsBtn" title="Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+        <button class="footer-btn danger" id="lockBtn" title="Lock">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <circle cx="12" cy="16" r="1"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Permission Request Modal -->
+    <div class="modal" id="permissionModal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-icon request">🔐</div>
+          <h3>Permission Request</h3>
+        </div>
+        <div class="modal-body">
+          <p class="request-domain" id="requestDomain">example.com</p>
+          <p class="request-text">is requesting access to:</p>
+          
+          <div class="claims-list" id="requestedClaims">
+            <!-- Claims will be added dynamically -->
+          </div>
+
+          <div class="duration-selector">
+            <label>Grant access for:</label>
+            <select id="durationSelect">
+              <option value="5">5 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="60">1 hour</option>
+              <option value="1440">24 hours</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="denyPermission">Deny</button>
+          <button class="btn btn-primary" id="approvePermission">Approve</button>
+        </div>
+      </div>
+    </div>
+    <!-- Add Credential Modal -->
+    <div class="modal" id="addCredentialModal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-icon">📜</div>
+          <h3>Add Credential</h3>
+        </div>
+        <div class="modal-body">
+          <div class="credential-types">
+            <button class="credential-type-btn active" data-type="EmailCredential">
+              <span class="type-icon">📧</span>
+              <span class="type-name">Email</span>
+            </button>
+            <button class="credential-type-btn" data-type="AgeCredential">
+              <span class="type-icon">🎂</span>
+              <span class="type-name">Age</span>
+            </button>
+            <button class="credential-type-btn" data-type="IdentityCredential">
+              <span class="type-icon">🪪</span>
+              <span class="type-name">Identity</span>
+            </button>
+          </div>
+          
+          <form id="credentialForm" class="credential-form">
+            <!-- Email Credential Fields -->
+            <div class="field-group" id="emailFields">
+              <label>Email Address</label>
+              <input type="email" id="credEmail" placeholder="you@example.com" required>
+            </div>
+            
+            <!-- Age Credential Fields (hidden by default) -->
+            <div class="field-group hidden" id="ageFields">
+              <label>Date of Birth</label>
+              <input type="date" id="credBirthDate">
+            </div>
+            
+            <!-- Identity Credential Fields (hidden by default) -->
+            <div class="field-group hidden" id="identityFields">
+              <label>Full Name</label>
+              <input type="text" id="credFullName" placeholder="John Doe">
+              <label>Country</label>
+              <input type="text" id="credCountry" placeholder="United States">
+            </div>
+          </form>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="cancelCredential">Cancel</button>
+          <button class="btn btn-primary" id="saveCredential">Save Credential</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
