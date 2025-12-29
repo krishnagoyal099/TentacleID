@@ -1,6 +1,6 @@
 {
   "name": "tentacleid",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Decentralized Identity Wallet - One Identity, Many Reaches 🐙",
   "main": "demo/app.js",
   "scripts": {
