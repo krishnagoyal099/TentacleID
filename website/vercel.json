@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "tentacleid-website",
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

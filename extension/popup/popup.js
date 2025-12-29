@@ -96,8 +96,8 @@ function setupEventListeners() {
   document.getElementById('lockBtn').addEventListener('click', handleLock);
   document.getElementById('addCredentialBtn').addEventListener('click', openAddCredentialModal);
   document.getElementById('addFirstCredential')?.addEventListener('click', openAddCredentialModal);
-  document.getElementById('scanQRBtn').addEventListener('click', () => showToast('Coming soon!', 'warning'));
-  document.getElementById('shareIdentityBtn').addEventListener('click', shareIdentity);
+  document.getElementById('showQRBtn').addEventListener('click', showQRCode);
+  document.getElementById('revokeAccessBtn').addEventListener('click', showRevokeAccess);
   
   // Permission modal
   document.getElementById('approvePermission').addEventListener('click', handleApprovePermission);
@@ -117,6 +117,9 @@ function setupEventListeners() {
   // Passkey buttons
   document.getElementById('passkeyUnlockBtn')?.addEventListener('click', handlePasskeyUnlock);
   document.getElementById('setupPasskeyBtn')?.addEventListener('click', handlePasskeySetup);
+  
+  // API Guide button
+  document.getElementById('apiGuideBtn')?.addEventListener('click', showAPIGuide);
   
   // Check for passkey availability on load
   checkPasskeyAvailability();
@@ -278,11 +281,21 @@ async function updateDashboard() {
     const credentials = await listCredentials();
     document.getElementById('credentialCount').textContent = credentials.length;
     
-    // Count active permissions (this would need domain context in real app)
-    document.getElementById('permissionCount').textContent = '0';
+    // Count all active permissions from storage
+    try {
+      const { permissions = [] } = await chrome.storage.local.get('permissions');
+      const now = Date.now();
+      const activePermissions = permissions.filter(p => p.expiresAt > now);
+      document.getElementById('permissionCount').textContent = activePermissions.length;
+    } catch (e) {
+      document.getElementById('permissionCount').textContent = '0';
+    }
     
     // Update credentials list
     updateCredentialsList(credentials);
+    
+    // Update activity list
+    updateActivityList();
   } catch (error) {
     console.error('Failed to load credentials:', error);
   }
@@ -326,6 +339,69 @@ function getCredentialIcon(type) {
 
 function formatCredentialType(type) {
   return type.replace('Credential', ' Credential').replace(/([A-Z])/g, ' $1').trim();
+}
+
+// ============ Activity Tracking ============
+
+async function updateActivityList() {
+  const listEl = document.getElementById('activityList');
+  const emptyEl = document.getElementById('noActivity');
+  
+  try {
+    // Get permissions (activity) from chrome.storage
+    const { permissions = [] } = await chrome.storage.local.get('permissions');
+    const now = Date.now();
+    
+    // Sort by most recent first
+    const sortedPermissions = [...permissions].sort((a, b) => b.grantedAt - a.grantedAt);
+    
+    if (sortedPermissions.length === 0) {
+      listEl.style.display = 'none';
+      emptyEl.style.display = 'flex';
+      return;
+    }
+    
+    listEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    
+    listEl.innerHTML = sortedPermissions.map(perm => {
+      const isActive = perm.expiresAt > now;
+      const timeAgo = formatTimeAgo(perm.grantedAt);
+      const expiresIn = isActive ? formatExpiresIn(perm.expiresAt - now) : 'Expired';
+      
+      return `
+        <div class="activity-item ${isActive ? 'active' : 'expired'}">
+          <div class="activity-icon">${isActive ? '🔓' : '⏱️'}</div>
+          <div class="activity-info">
+            <div class="activity-domain">${perm.domain}</div>
+            <div class="activity-meta">
+              <span>${timeAgo}</span>
+              <span class="activity-status ${isActive ? 'active' : 'expired'}">${expiresIn}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Failed to load activity:', error);
+    listEl.style.display = 'none';
+    emptyEl.style.display = 'flex';
+  }
+}
+
+function formatTimeAgo(timestamp) {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  return `${Math.floor(seconds / 86400)}d ago`;
+}
+
+function formatExpiresIn(ms) {
+  const minutes = Math.floor(ms / 60000);
+  if (minutes < 60) return `${minutes}m left`;
+  return `${Math.floor(minutes / 60)}h left`;
 }
 
 // ============ Permission Handling ============
@@ -480,20 +556,205 @@ async function copyDID() {
   }
 }
 
-async function shareIdentity() {
-  if (!currentIdentity) return;
-  
-  const shareData = {
-    did: currentIdentity.did,
-    displayName: currentIdentity.displayName
-  };
-  
-  try {
-    await navigator.clipboard.writeText(JSON.stringify(shareData, null, 2));
-    showToast('Identity info copied!', 'success');
-  } catch (error) {
-    showToast('Failed to copy', 'error');
+async function showQRCode() {
+  if (!currentIdentity) {
+    showToast('No identity to show', 'error');
+    return;
   }
+  
+  // Create a simple text-based QR representation (for demo - real QR would use a library)
+  const did = currentIdentity.did;
+  const shortDid = did.substring(0, 40) + '...';
+  
+  // Create modal with QR placeholder and copyable DID
+  const modal = document.createElement('div');
+  modal.className = 'modal active';
+  modal.id = 'qrModal';
+  modal.innerHTML = `
+    <div class="modal-backdrop"></div>
+    <div class="modal-content" style="text-align: center;">
+      <div class="modal-header">
+        <div class="modal-icon" style="background: var(--gradient-primary);">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+            <rect width="5" height="5" x="3" y="3" rx="1"/>
+            <rect width="5" height="5" x="16" y="3" rx="1"/>
+            <rect width="5" height="5" x="3" y="16" rx="1"/>
+            <path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
+            <path d="M21 21v.01"/>
+          </svg>
+        </div>
+        <h3>Your Identity QR</h3>
+        <p style="color: var(--text-secondary); font-size: 12px;">Share this with sites to connect</p>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div style="background: white; padding: 20px; border-radius: 12px; margin: 0 auto; width: fit-content;">
+          <div style="width: 120px; height: 120px; background: linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(-45deg, #000 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #000 75%), linear-gradient(-45deg, transparent 75%, #000 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 32px;">🐙</span>
+          </div>
+        </div>
+        <div style="margin-top: 16px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; word-break: break-all; font-size: 11px; color: var(--text-secondary);">
+          ${did}
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary">Close</button>
+        <button class="btn btn-primary">Copy DID</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Event listeners
+  modal.querySelector('.modal-backdrop').addEventListener('click', () => modal.remove());
+  modal.querySelector('.btn-secondary').addEventListener('click', () => modal.remove());
+  
+  const copyBtn = modal.querySelector('.btn-primary');
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(did);
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => copyBtn.textContent = 'Copy DID', 1500);
+  });
+}
+
+async function showRevokeAccess() {
+  try {
+    const { permissions = [] } = await chrome.storage.local.get('permissions');
+    const now = Date.now();
+    const activePermissions = permissions.filter(p => p.expiresAt > now);
+    
+    if (activePermissions.length === 0) {
+      showToast('No active permissions to revoke', 'info');
+      return;
+    }
+    
+    // Create revoke modal
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'revokeModal';
+    modal.innerHTML = `
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-icon danger">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+              <path d="m14.5 9.5-5 5"/>
+              <path d="m9.5 9.5 5 5"/>
+            </svg>
+          </div>
+          <h3>Revoke Access</h3>
+          <p style="color: var(--text-secondary); font-size: 12px;">Remove site permissions</p>
+        </div>
+        <div class="modal-body" style="max-height: 200px; overflow-y: auto;">
+          ${activePermissions.map((p, i) => `
+            <div class="revoke-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; margin: 8px 0; background: rgba(255,255,255,0.03); border-radius: 8px;">
+              <div>
+                <div style="font-weight: 600;">${p.domain}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">${formatExpiresIn(p.expiresAt - now)}</div>
+              </div>
+              <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" data-index="${i}">Revoke</button>
+            </div>
+          `).join('')}
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="closeRevokeModal">Close</button>
+          <button class="btn btn-primary" id="revokeAllBtn">Revoke All</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.querySelector('.modal-backdrop').addEventListener('click', () => modal.remove());
+    modal.querySelector('#closeRevokeModal').addEventListener('click', () => modal.remove());
+    
+    // Handle individual revoke
+    modal.querySelectorAll('.revoke-item button').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.index);
+        const newPermissions = permissions.filter((_, i) => i !== idx);
+        await chrome.storage.local.set({ permissions: newPermissions });
+        showToast('Permission revoked', 'success');
+        modal.remove();
+        updateDashboard();
+      });
+    });
+    
+    // Handle revoke all
+    modal.querySelector('#revokeAllBtn').addEventListener('click', async () => {
+      await chrome.storage.local.set({ permissions: [] });
+      showToast('All permissions revoked', 'success');
+      modal.remove();
+      updateDashboard();
+    });
+    
+  } catch (error) {
+    showToast('Error loading permissions', 'error');
+  }
+}
+
+function showAPIGuide() {
+  const modal = document.createElement('div');
+  modal.className = 'modal active';
+  modal.id = 'apiGuideModal';
+  modal.innerHTML = `
+    <div class="modal-backdrop"></div>
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <div class="modal-icon" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polyline points="16,18 22,12 16,6"/>
+            <polyline points="8,6 2,12 8,18"/>
+          </svg>
+        </div>
+        <h3>TentacleID API</h3>
+        <p style="color: var(--text-secondary); font-size: 12px;">Integrate identity verification in your site</p>
+      </div>
+      <div class="modal-body" style="max-height: 280px; overflow-y: auto; text-align: left;">
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+          <div style="font-size: 11px; color: #10b981; margin-bottom: 4px;">// Check if installed</div>
+          <code style="font-size: 11px; color: #e2e8f0;">const status = await tentacleID.isInstalled();</code>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+          <div style="font-size: 11px; color: #10b981; margin-bottom: 4px;">// Authenticate user</div>
+          <code style="font-size: 11px; color: #e2e8f0;">const { did, grant } = await tentacleID.authenticate();</code>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+          <div style="font-size: 11px; color: #10b981; margin-bottom: 4px;">// Verify age (18+)</div>
+          <code style="font-size: 11px; color: #e2e8f0;">const { verified } = await tentacleID.verifyAge(18);</code>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+          <div style="font-size: 11px; color: #10b981; margin-bottom: 4px;">// Request email</div>
+          <code style="font-size: 11px; color: #e2e8f0;">const { email } = await tentacleID.verifyEmail();</code>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px;">
+          <div style="font-size: 11px; color: #10b981; margin-bottom: 4px;">// Get user's DID</div>
+          <code style="font-size: 11px; color: #e2e8f0;">const did = await tentacleID.getDID();</code>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary">Close</button>
+        <button class="btn btn-primary">Copy Example</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Event listeners
+  modal.querySelector('.modal-backdrop').addEventListener('click', () => modal.remove());
+  modal.querySelector('.btn-secondary').addEventListener('click', () => modal.remove());
+  
+  const copyBtn = modal.querySelector('.btn-primary');
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText('const { did } = await tentacleID.authenticate();');
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => copyBtn.textContent = 'Copy Example', 1500);
+  });
 }
 
 function showToast(message, type = 'info') {
@@ -644,8 +905,24 @@ async function checkPasskeyAvailability() {
     const hasPasskeys = await hasRegisteredPasskeys();
     
     const passkeySection = document.getElementById('passkeySection');
-    if (passkeySection && support.supported && hasPasskeys) {
+    const passkeyBtn = document.getElementById('passkeyUnlockBtn');
+    
+    // Show passkey section if device supports it (even before setup)
+    if (passkeySection && support.supported) {
       passkeySection.style.display = 'block';
+      
+      // Update button text based on whether passkeys are registered
+      if (passkeyBtn) {
+        const textSpan = passkeyBtn.querySelector('span:last-child');
+        if (textSpan) {
+          if (hasPasskeys) {
+            textSpan.textContent = 'Unlock with Biometrics';
+          } else {
+            textSpan.textContent = 'Setup Biometrics First →';
+            passkeyBtn.title = 'Setup passkey in wallet to enable biometric unlock';
+          }
+        }
+      }
     }
   } catch (error) {
     console.log('Passkey check error:', error);
@@ -654,7 +931,14 @@ async function checkPasskeyAvailability() {
 
 async function handlePasskeyUnlock() {
   try {
-    const { authenticateWithPasskey } = await import('../src/core/passkeys.js');
+    const { authenticateWithPasskey, hasRegisteredPasskeys } = await import('../src/core/passkeys.js');
+    
+    // Check if passkeys are registered first
+    const hasPasskeys = await hasRegisteredPasskeys();
+    if (!hasPasskeys) {
+      showToast('Please unlock with password first, then setup passkey in the wallet', 'warning');
+      return;
+    }
     
     const result = await authenticateWithPasskey();
     
