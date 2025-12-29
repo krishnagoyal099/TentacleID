@@ -7,14 +7,25 @@
   <link rel="stylesheet" href="popup.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="app">
     <!-- Header -->
     <header class="header">
       <div class="logo">
-        <div class="octopus-icon">🐙</div>
+        <div class="octopus-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="8" r="6"/>
+            <path d="M4 14c0 2 1 4 2 5s2 2 2 4"/>
+            <path d="M8 14c0 2 0 4 0 6s-1 2-1 4"/>
+            <path d="M12 14v5c0 1 0 2 1 3"/>
+            <path d="M16 14c0 2 0 4 0 6s1 2 1 4"/>
+            <path d="M20 14c0 2-1 4-2 5s-2 2-2 4"/>
+            <circle cx="10" cy="7" r="1" fill="currentColor"/>
+            <circle cx="14" cy="7" r="1" fill="currentColor"/>
+          </svg>
+        </div>
         <h1>TentacleID</h1>
       </div>
       <div class="status-indicator" id="statusIndicator">
@@ -54,12 +65,31 @@
           </button>
         </form>
 
+        <!-- Passkey Unlock -->
+        <div class="passkey-section" id="passkeySection" style="display: none;">
+          <div class="divider">
+            <span>or</span>
+          </div>
+          <button id="passkeyUnlockBtn" class="btn btn-secondary passkey-btn">
+            <span class="passkey-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 10V6a4 4 0 00-8 0v4"/>
+                <rect x="2" y="10" width="12" height="10" rx="2"/>
+                <circle cx="8" cy="15" r="1.5"/>
+                <path d="M16 13h6m-3 3v-6"/>
+              </svg>
+            </span>
+            <span>Unlock with Biometrics</span>
+          </button>
+        </div>
+
         <div class="create-new">
           <span>First time?</span>
           <button id="showCreateBtn" class="btn-link">Create Identity</button>
         </div>
       </div>
     </section>
+
 
     <!-- Create Identity State -->
     <section id="createState" class="screen">
@@ -76,7 +106,18 @@
           <div class="tentacle t2"></div>
           <div class="tentacle t3"></div>
           <div class="tentacle t4"></div>
-          <div class="octopus-body">🐙</div>
+          <div class="octopus-body">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="8" r="6"/>
+              <path d="M4 14c0 2 1 4 2 5s2 2 2 4"/>
+              <path d="M8 14c0 2 0 4 0 6s-1 2-1 4"/>
+              <path d="M12 14v5c0 1 0 2 1 3"/>
+              <path d="M16 14c0 2 0 4 0 6s1 2 1 4"/>
+              <path d="M20 14c0 2-1 4-2 5s-2 2-2 4"/>
+              <circle cx="10" cy="7" r="1" fill="currentColor"/>
+              <circle cx="14" cy="7" r="1" fill="currentColor"/>
+            </svg>
+          </div>
         </div>
 
         <h2>Create Your Identity</h2>
@@ -100,7 +141,9 @@
 
           <button type="submit" class="btn btn-primary btn-glow">
             <span>Generate Identity</span>
-            <div class="sparkles">✨</div>
+            <svg class="sparkles" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+            </svg>
           </button>
         </form>
       </div>
@@ -137,15 +180,33 @@
 
         <div class="quick-actions">
           <button class="action-btn" id="addCredentialBtn">
-            <div class="action-icon">📜</div>
+            <div class="action-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <path d="M14 2v6h6"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <line x1="10" y1="9" x2="8" y2="9"/>
+              </svg>
+            </div>
             <span>Add Credential</span>
           </button>
           <button class="action-btn" id="scanQRBtn">
-            <div class="action-icon">📷</div>
+            <div class="action-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M7 7h.01M7 12h.01M7 17h.01M12 7h.01M12 12h.01M12 17h.01M17 7h.01M17 12h.01M17 17h.01"/>
+              </svg>
+            </div>
             <span>Scan QR</span>
           </button>
           <button class="action-btn" id="shareIdentityBtn">
-            <div class="action-icon">🔗</div>
+            <div class="action-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+              </svg>
+            </div>
             <span>Share</span>
           </button>
         </div>
@@ -169,7 +230,12 @@
         </div>
 
         <div class="empty-state" id="noCredentials">
-          <div class="empty-icon">📭</div>
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M22 12h-6l-2 3h-4l-2-3H2"/>
+              <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
+            </svg>
+          </div>
           <p>No credentials yet</p>
           <button class="btn btn-secondary" id="addFirstCredential">Add your first credential</button>
         </div>
@@ -182,7 +248,11 @@
         </div>
 
         <div class="empty-state" id="noActivity">
-          <div class="empty-icon">📊</div>
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 20V10M18 20V4M6 20v-4"/>
+            </svg>
+          </div>
           <p>No recent activity</p>
           <span class="empty-hint">Login requests and verifications will appear here</span>
         </div>
@@ -196,6 +266,19 @@
             <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
           </svg>
         </button>
+        <button class="footer-btn" id="setupPasskeyBtn" title="Setup Passkey">
+          <!-- Elegant Skeleton Key Icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Decorative Round Head with Inner Circle -->
+            <circle cx="8" cy="8" r="5"/>
+            <circle cx="8" cy="8" r="2"/>
+            <!-- Key Shaft -->
+            <path d="M12 12L21 21"/>
+            <!-- Key Teeth -->
+            <path d="M17 17l2 0"/>
+            <path d="M19 19l2 0"/>
+          </svg>
+        </button>
         <button class="footer-btn danger" id="lockBtn" title="Lock">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -206,12 +289,20 @@
       </div>
     </section>
 
+
     <!-- Permission Request Modal -->
     <div class="modal" id="permissionModal">
       <div class="modal-backdrop"></div>
       <div class="modal-content">
         <div class="modal-header">
-          <div class="modal-icon request">🔐</div>
+          <div class="modal-icon request">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 10V6a4 4 0 00-8 0v4"/>
+              <rect x="2" y="10" width="12" height="10" rx="2"/>
+              <circle cx="8" cy="15" r="1.5"/>
+              <path d="M16 13h6m-3 3v-6"/>
+            </svg>
+          </div>
           <h3>Permission Request</h3>
         </div>
         <div class="modal-body">
@@ -243,21 +334,62 @@
       <div class="modal-backdrop"></div>
       <div class="modal-content">
         <div class="modal-header">
-          <div class="modal-icon">📜</div>
+          <div class="modal-icon">
+            <!-- Credential/Scroll SVG Icon - Artistic Style -->
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7c0-1.5 1-2.5 2.5-2.5S9 5.5 9 7v10c0 1.5-1 2.5-2.5 2.5S4 18.5 4 17"/>
+              <path d="M9 7h10c.5 0 1 .5 1 1v8c0 .5-.5 1-1 1H9"/>
+              <path d="M6.5 4.5c2 0 2.5 1 2.5 2.5"/>
+              <path d="M6.5 19.5c-2 0-2.5-1-2.5-2.5"/>
+              <path d="M12 10h5M12 14h3"/>
+              <circle cx="6.5" cy="7" r="0.5" fill="currentColor"/>
+              <circle cx="6.5" cy="17" r="0.5" fill="currentColor"/>
+            </svg>
+          </div>
           <h3>Add Credential</h3>
         </div>
         <div class="modal-body">
           <div class="credential-types">
             <button class="credential-type-btn active" data-type="EmailCredential">
-              <span class="type-icon">📧</span>
+              <span class="type-icon">
+                <!-- Email SVG Icon - Artistic Style -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8c0-2 1.5-3.5 3.5-3.5h11c2 0 3.5 1.5 3.5 3.5v8c0 2-1.5 3.5-3.5 3.5h-11C4.5 19.5 3 18 3 16V8z"/>
+                  <path d="M3 8l8.5 6c.3.2.7.2 1 0L21 8"/>
+                  <path d="M3 16l5-4"/>
+                  <path d="M21 16l-5-4"/>
+                  <circle cx="12" cy="10" r="0.5" fill="currentColor"/>
+                </svg>
+              </span>
               <span class="type-name">Email</span>
             </button>
             <button class="credential-type-btn" data-type="AgeCredential">
-              <span class="type-icon">🎂</span>
+              <span class="type-icon">
+                <!-- Birthday Cake SVG Icon - Artistic Style -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 18v-3c0-1 .5-2 2-2h12c1.5 0 2 1 2 2v3c0 1-.5 2-2 2H6c-1.5 0-2-1-2-2z"/>
+                  <path d="M4 15c1 .5 2 1 4 1s3-.5 4-1 2-1 4-1 3 .5 4 1"/>
+                  <path d="M8 13V9c0-.5.5-1 1-1h6c.5 0 1 .5 1 1v4"/>
+                  <path d="M9 5c0-1 .5-2 1.5-2s1.5 1 1.5 2"/>
+                  <path d="M12 5v3"/>
+                  <circle cx="12" cy="4" r="1" fill="currentColor"/>
+                </svg>
+              </span>
               <span class="type-name">Age</span>
             </button>
             <button class="credential-type-btn" data-type="IdentityCredential">
-              <span class="type-icon">🪪</span>
+              <span class="type-icon">
+                <!-- Identity Card SVG Icon - Artistic Style -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2.5" ry="2.5"/>
+                  <circle cx="8" cy="11" r="2.5"/>
+                  <path d="M5 17c.5-2 1.5-3 3-3s2.5 1 3 3"/>
+                  <path d="M14 9h5"/>
+                  <path d="M14 12h4"/>
+                  <path d="M14 15h3"/>
+                  <circle cx="19" cy="7" r="0.5" fill="currentColor"/>
+                </svg>
+              </span>
               <span class="type-name">Identity</span>
             </button>
           </div>

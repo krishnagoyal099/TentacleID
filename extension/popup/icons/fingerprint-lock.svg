@@ -1,0 +1,28 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fingerprint Lock Icon - Transparent Background -->
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Lock Body -->
+    <rect x="15" y="40" width="55" height="50" rx="8"/>
+    
+    <!-- Open Shackle -->
+    <path d="M25 40 V28 A20 20 0 0 1 65 28 V35"/>
+    
+    <!-- Fingerprint Pattern - Artistic Curves -->
+    <!-- Center stem -->
+    <path d="M42 78 V62"/>
+    
+    <!-- Inner curves -->
+    <path d="M32 72 Q37 65 42 62"/>
+    <path d="M52 72 Q47 65 42 62"/>
+    
+    <!-- Middle curves -->
+    <path d="M28 65 Q35 55 42 52 Q49 55 56 65"/>
+    
+    <!-- Outer curves -->
+    <path d="M24 58 Q35 45 42 45 Q49 45 60 58"/>
+    
+    <!-- Small accent curves -->
+    <path d="M35 80 Q40 75 42 72"/>
+    <path d="M49 80 Q44 75 42 72"/>
+  </g>
+</svg>

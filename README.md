@@ -13,6 +13,8 @@ TentacleID is a browser extension implementing W3C Decentralized Identifiers (DI
 - **⏱️ Time-Limited Permissions** - Grant access for 5 minutes, 1 hour, or 24 hours
 - **🔒 Local-First Security** - Private keys never leave your device
 - **🌐 W3C Standards** - Built on DID and Verifiable Credentials specifications
+- **🔑 Passkey Support** - Unlock with fingerprint or Face ID (WebAuthn)
+- **🛡️ Zero-Knowledge Proofs** - Prove claims without revealing underlying data
 
 ## 🚀 Quick Start
 
@@ -23,7 +25,7 @@ TentacleID is a browser extension implementing W3C Decentralized Identifiers (DI
 3. Click **Load unpacked**
 4. Select the `extension` folder from this project
 
-### 2. Run the Demo Website
+### 2. Run the Demo Websites
 
 ```bash
 # Navigate to project directory
@@ -36,7 +38,9 @@ npx http-server -p 3000 -c-1
 python -m http.server 3000
 ```
 
-Then open `http://localhost:3000/demo/` in Chrome with the extension loaded.
+Demo sites available:
+- **Main Demo**: `http://localhost:3000/demo/` - General authentication showcase
+- **Bar Demo**: `http://localhost:3000/demo-bar/` - Age verification for 21+ venues
 
 ### 3. Create Your Identity
 
@@ -44,6 +48,7 @@ Then open `http://localhost:3000/demo/` in Chrome with the extension loaded.
 2. Click "Create Identity"
 3. Set a passphrase (this encrypts your keys locally)
 4. Your DID is generated!
+5. **Optional**: Click 🔐 to setup biometric unlock
 
 ## 📁 Project Structure
 
@@ -53,7 +58,9 @@ TentacleID/
 │   ├── crypto.js           # Web Crypto API operations
 │   ├── did.js              # DID document management
 │   ├── storage.js          # Encrypted IndexedDB
-│   └── credentials.js      # Verifiable Credentials
+│   ├── credentials.js      # Verifiable Credentials
+│   ├── zkproofs.js         # Zero-Knowledge Proofs
+│   └── passkeys.js         # WebAuthn/Passkey integration
 │
 ├── extension/              # Chrome Extension
 │   ├── manifest.json       # Extension config
@@ -66,10 +73,15 @@ TentacleID/
 │   │   └── popup.js
 │   └── icons/              # Extension icons
 │
-└── demo/                   # Demo Website
-    ├── index.html          # Landing page
-    ├── styles.css          # Premium dark theme
-    └── app.js              # Demo logic
+├── demo/                   # Main Demo Website
+│   ├── index.html          # Landing page
+│   ├── styles.css          # Premium dark theme
+│   └── app.js              # Demo logic
+│
+└── demo-bar/               # 21+ Age Verification Demo
+    ├── index.html          # The Velvet Lounge
+    ├── styles.css          # Elegant bar theme
+    └── app.js              # Age verification flow
 ```
 
 ## 🔧 Website Integration
@@ -106,6 +118,8 @@ tentacleID.createLoginButton('#container', {
 - **Encryption**: AES-256-GCM with PBKDF2 key derivation (100,000 iterations)
 - **DID Method**: `did:key` (self-sovereign, no external dependencies)
 - **Selective Disclosure**: Hash-based reveals - prove claims without exposing raw data
+- **ZK Proofs**: Commitment-based age proofs without revealing birthdate
+- **Passkeys**: WebAuthn for biometric authentication
 
 ## 🛠️ Technologies
 
@@ -114,16 +128,17 @@ tentacleID.createLoginButton('#container', {
 | W3C DIDs | Decentralized Identifiers standard |
 | W3C VCs | Verifiable Credentials Data Model |
 | Web Crypto API | Cryptographic operations |
+| WebAuthn | Passkey/biometric authentication |
 | IndexedDB | Encrypted local storage |
 | Chrome Manifest V3 | Modern extension architecture |
 
 ## 📋 Demo Scenarios
 
-### Age Verification
-Prove you're over 18 without revealing your birthdate. Perfect for:
+### Age Verification (ZK Proof)
+Prove you're over 18/21 without revealing your birthdate. Perfect for:
 - Age-gated content
+- Bar/club entrance
 - Alcohol/tobacco verification
-- Gaming platforms
 
 ### Temporary Email Access
 Share your email for exactly 5 minutes:
@@ -137,13 +152,20 @@ Complete authentication using only your DID:
 - No database of credentials to hack
 - Cryptographically secure
 
+### Biometric Unlock
+Use fingerprint or Face ID to unlock your wallet:
+- Fast and secure
+- No password to type
+- Backed by hardware
+
 ## 🗺️ Roadmap
 
+- [x] Zero-Knowledge Proofs (ZK)
+- [x] Passkey/WebAuthn integration
 - [ ] QR code scanning for credential import
 - [ ] Ethereum blockchain DID anchoring
 - [ ] Mobile companion app
 - [ ] Enterprise SSO integration
-- [ ] Zero-knowledge proofs (ZKP)
 
 ## 📄 License
 

@@ -113,6 +113,13 @@ function setupEventListeners() {
   document.querySelectorAll('.credential-type-btn').forEach(btn => {
     btn.addEventListener('click', () => switchCredentialType(btn.dataset.type));
   });
+  
+  // Passkey buttons
+  document.getElementById('passkeyUnlockBtn')?.addEventListener('click', handlePasskeyUnlock);
+  document.getElementById('setupPasskeyBtn')?.addEventListener('click', handlePasskeySetup);
+  
+  // Check for passkey availability on load
+  checkPasskeyAvailability();
 }
 
 
@@ -626,3 +633,101 @@ function calculateAge(birthDate) {
   }
   return age;
 }
+
+// ============ Passkey Functions ============
+
+async function checkPasskeyAvailability() {
+  try {
+    const { isPasskeySupported, hasRegisteredPasskeys } = await import('../src/core/passkeys.js');
+    
+    const support = await isPasskeySupported();
+    const hasPasskeys = await hasRegisteredPasskeys();
+    
+    const passkeySection = document.getElementById('passkeySection');
+    if (passkeySection && support.supported && hasPasskeys) {
+      passkeySection.style.display = 'block';
+    }
+  } catch (error) {
+    console.log('Passkey check error:', error);
+  }
+}
+
+async function handlePasskeyUnlock() {
+  try {
+    const { authenticateWithPasskey } = await import('../src/core/passkeys.js');
+    
+    const result = await authenticateWithPasskey();
+    
+    if (result.success) {
+      showToast('Unlocked with biometrics! 🔐', 'success');
+      
+      // For passkey users, we store a copy of identity in chrome.storage
+      // This is retrieved after passkey auth succeeds
+      const stored = await chrome.storage.local.get('passkeyIdentity');
+      
+      if (stored.passkeyIdentity) {
+        currentIdentity = stored.passkeyIdentity;
+        showScreen('dashboard');
+        updateDashboard();
+        
+        // Notify background
+        await chrome.runtime.sendMessage({
+          type: 'SESSION_UNLOCKED',
+          identity: { did: currentIdentity.did, displayName: currentIdentity.displayName }
+        });
+      } else {
+        showToast('Please unlock with password first, then setup passkey again', 'warning');
+      }
+    } else {
+      showToast(result.error || 'Passkey authentication failed', 'error');
+    }
+  } catch (error) {
+    showToast('Passkey error: ' + error.message, 'error');
+  }
+}
+
+async function handlePasskeySetup() {
+  try {
+    const { isPasskeySupported, setupPasskeyForDID } = await import('../src/core/passkeys.js');
+    
+    // Check support first
+    const support = await isPasskeySupported();
+    
+    if (!support.supported) {
+      showToast('Passkeys not supported on this device', 'warning');
+      return;
+    }
+    
+    if (!support.platformAuth) {
+      showToast('No biometric authenticator found', 'warning');
+      return;
+    }
+    
+    if (!currentIdentity?.did) {
+      showToast('Please unlock your wallet first', 'warning');
+      return;
+    }
+    
+    showToast('Setting up passkey...', 'info');
+    
+    const result = await setupPasskeyForDID(currentIdentity.did);
+    
+    if (result.success) {
+      // Store identity for passkey unlock (so we don't need password)
+      await chrome.storage.local.set({ 
+        passkeyIdentity: {
+          did: currentIdentity.did,
+          displayName: currentIdentity.displayName,
+          publicKey: currentIdentity.publicKey
+        }
+      });
+      
+      showToast('Passkey registered! 🎉 You can now unlock with biometrics.', 'success');
+    } else {
+      showToast(result.error || 'Passkey setup failed', 'error');
+    }
+  } catch (error) {
+    showToast('Passkey setup error: ' + error.message, 'error');
+  }
+}
+

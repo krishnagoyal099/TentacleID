@@ -142,10 +142,10 @@
      * @returns {Promise<string>}
      */
     async getDID() {
-      await readyPromise;
-      const response = await sendMessage('GET_DID', {});
+      const response = await sendMessage('GET_DID', {}, 5000);
       return response.did;
     },
+
 
     /**
      * Verify if user is over a certain age
