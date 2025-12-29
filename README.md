@@ -21,7 +21,6 @@ TentacleID is a local-first **Decentralized Identity Wallet** that lives in your
 
 Bridging the gap between privacy and convenience, TentacleID offers a seamless authentication experience that leaves no data trail.
 
-![TentacleID Demo](demo-preview.png)
 
 ## ✨ Features
 
