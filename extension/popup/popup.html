@@ -8,15 +8,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="app">
     <!-- Header -->
     <header class="header">
       <div class="logo">
-        <div class="octopus-icon">
-          <img src="tentacle-icon.png" alt="TentacleID" width="28" height="28">
-        </div>
         <h1>TentacleID</h1>
       </div>
       <div class="status-indicator" id="statusIndicator">
@@ -28,13 +26,8 @@
     <!-- Locked State -->
     <section id="lockedState" class="screen active">
       <div class="lock-container">
-        <div class="lock-icon">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <circle cx="12" cy="16" r="1"/>
-            <path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
-        </div>
+        <!-- 3D Octopus that follows cursor -->
+        <div id="octopus3dContainer"></div>
         <h2>Unlock Your Identity</h2>
         <p class="subtitle">Enter your passphrase to access your TentacleID</p>
         
@@ -410,6 +403,7 @@
 
   </div>
 
+  <script src="octopus-3d.js"></script>
   <script type="module" src="popup.js"></script>
 </body>
 </html>

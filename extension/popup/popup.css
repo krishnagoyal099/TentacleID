@@ -118,7 +118,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
   background: linear-gradient(180deg, rgba(15, 31, 58, 0.95) 0%, rgba(10, 22, 40, 0.9) 100%);
   backdrop-filter: blur(10px);
 }
@@ -141,7 +140,8 @@ body {
 }
 
 .logo h1 {
-  font-size: 20px;
+  font-family: 'Lobster Two', cursive;
+  font-size: 28px;
   font-weight: 700;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
@@ -1508,4 +1508,87 @@ body {
   font-size: 10px;
 }
 
+/* 3D Octopus Animation - MetaMask-style cursor tracking */
+#octopus3dContainer {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 20px;
+  perspective: 800px;
+  perspective-origin: 50% 50%;
+}
+
+.octopus-3d-scene {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.octopus-3d {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.05s ease-out;
+  will-change: transform;
+}
+
+.octopus-3d-body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  position: relative;
+  animation: octopusFloat 3s ease-in-out infinite;
+}
+
+@keyframes octopusFloat {
+  0%, 100% { transform: translateZ(0) translateY(0); }
+  50% { transform: translateZ(10px) translateY(-8px); }
+}
+
+.octopus-3d-icon {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 5px 15px rgba(59, 130, 246, 0.4));
+  transition: filter 0.3s ease;
+}
+
+.octopus-3d:hover .octopus-3d-icon {
+  filter: drop-shadow(0 8px 25px rgba(59, 130, 246, 0.6));
+}
+
+.octopus-3d-shadow {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 15px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  transition: transform 0.1s ease-out;
+}
+
+.octopus-3d-reflection {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(5px);
+  width: 40px;
+  height: 25px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Enhanced lock container for 3D octopus */
+.lock-container.with-3d-octopus .lock-icon {
+  display: none;
+}
 
