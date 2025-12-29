@@ -417,18 +417,16 @@ body {
 
 /* Octopus Animation */
 .octopus-animation {
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 120px;
   height: 100px;
-  margin-bottom: 20px;
+  margin: 0 auto 20px auto;
 }
 
 .octopus-body {
   font-size: 48px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   animation: float 2s ease-in-out infinite;
 }
 
